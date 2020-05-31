@@ -34,6 +34,4 @@ db.once('open', function () {
 
     user.save()
   }
-
-
 });

@@ -9,19 +9,39 @@ module.exports = {
 			res.json(users);
 		})
 	},
-	read(req, res) {
-		res.send({ user: 'Un user avec le numero ' + req.params.numero });
+	readUser(req, res) {
+		User.findById(req.params.id, function (err, user) {
+			if (err) {
+				res.send(err);
+			}
+			res.json(user);
+		})
 	},
-	create(req, res) {
-		const body = req.body;
-		console.log(body);
+	createUser(req, res) {
+		const user = new User(req.body);
+
+		user.save(function (err) {
+			if (err) {
+				res.send(err);
+			}
+			res.json({ message: 'Congratulation, the user is now in database' });
+		});
 	},
-	updateOne(req, res) {
-		const body = req.body;
-		console.log(body);
+	updateUser(req, res) {
+		User.findByIdAndUpdate(req.params.id, req.body, function (err) {
+			if (err) {
+				res.send(err);
+			}
+			res.json({ message: 'Congratulation, the user is now update' });
+		})
+
 	},
-	deleteOne(req, res) {
-		const body = req.body;
-		console.log(body);
+	deleteUser(req, res) {
+		User.findByIdAndRemove(req.params.id, function (err) {
+			if (err) {
+				res.send(err);
+			}
+			res.json({ message: 'Congratulation, the user is now delete' });
+		})
 	}
 }

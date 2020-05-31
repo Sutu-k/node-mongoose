@@ -11,7 +11,7 @@ module.exports = {
     })
   },
   readMovie(req, res) {
-    Movie.findById(req.params._id, function (err, movie) {
+    Movie.findById(req.params.id, function (err, movie) {
       if (err) {
         res.send(err);
       }
