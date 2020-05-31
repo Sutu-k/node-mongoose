@@ -7,10 +7,13 @@ const mongoose = require('mongoose');
 const routes = require('./routes/index');
 //Import Body parser
 const bodyParser = require('body-parser');
+const cors = require('cors');
 //Initialise the server
 const server = express();
 
 mongoose.Promise = global.Promise;
+
+server.use(cors());
 // Configure bodyparser to handle post requests
 server.use(bodyParser.urlencoded({
 	extended: true

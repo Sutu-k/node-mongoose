@@ -6,7 +6,10 @@ const bcrypt = require('bcryptjs');
 const UserSchema = new Schema({
 	firstname: String,
 	lastname: String,
-	age: Number,
+	age: {
+		type: Number,
+		min: 14
+	},
 	email: {
 		type: String,
 		trim: true,
@@ -28,10 +31,10 @@ const UserSchema = new Schema({
 
 UserSchema.pre('save', function (next) {
 	bcrypt.genSalt(10).then(salt => {
-			bcrypt.hash(this.password, salt).then(hash => {
-					this.password = hash;
-					next();
-			})
+		bcrypt.hash(this.password, salt).then(hash => {
+			this.password = hash;
+			next();
+		})
 	});
 	console.log(`Saving ${this.firstname} ...`);
 });

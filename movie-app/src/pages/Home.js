@@ -10,7 +10,7 @@ class Home extends Component {
     super(props)
 
     this.state = {
-      movieID: 157336 // set initital load movie - Interstellar
+      movieID: 1073 // set initital load movie - Interstellar
     }
   }
 
@@ -55,12 +55,12 @@ class Home extends Component {
   } // end function
 
   fetchMovieID(movieID) {
-    let url = `https://api.themoviedb.org/3/movie/${movieID}?&api_key=cfe422613b250f702980a3bbf9e90716`
+    let url = `http://localhost:3050/search/${movieID}`
     this.fetchApi(url)
   } // end function
 
   componentDidMount() {
-    let url = `https://api.themoviedb.org/3/movie/${this.state.movieID}?&api_key=cfe422613b250f702980a3bbf9e90716`
+    let url = `http://localhost:3050/search/${this.state.movieID}`
     this.fetchApi(url)
 
     //========================= BLOODHOUND ==============================//
@@ -70,11 +70,12 @@ class Home extends Component {
       },
       queryTokenizer: Bloodhound.tokenizers.whitespace,
       remote: {
-        url: 'https://api.themoviedb.org/3/search/movie?query=%QUERY&api_key=cfe422613b250f702980a3bbf9e90716',
+        url: 'http://localhost:3050/searchs/%QUERY',
         wildcard: '%QUERY',
         filter: function (movies) {
+          console.log('received=>', movies)
           // Map the remote source JSON array to a JavaScript object array
-          return $.map(movies.results, function (movie) {
+          return $.map(movies, function (movie) {
             return {
               title: movie.original_title, // search original title
               id: movie.id // get ID of movie simultaniously
@@ -93,11 +94,13 @@ class Home extends Component {
     $('.typeahead').typeahead({
       hint: true,
       highlight: true,
-      minLength: 2
+      minLength: 2,
+      limit: 12
     },
       {
         source: suggests.ttAdapter(),
         displayKey: function (movie) {
+          console.log('oui', movie)
           return movie.title
         },
       }).on('typeahead:selected', function (obj, datum) {

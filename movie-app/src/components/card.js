@@ -18,7 +18,7 @@ class Card extends Component {
       noData = '-',
       genresList = nestedDataToString(genres);
     backdropIMG = 'https://image.tmdb.org/t/p/original' + data.backdrop;
-
+    let formatRelease = formatDate(data.release);
 
 
     // conditional statements for no data
@@ -45,7 +45,7 @@ class Card extends Component {
 
         <div className="row flex-column-reverse flex-md-row">
           <div className="poster-container nopadding col-xs-12 col-md-4 pull-md-8 col-lg-5 pull-lg-7 ">
-            <img id="postertest" className='poster' src={posterIMG} />
+            <img id="postertest" className='poster' src={posterIMG} alt={data.original_title} />
           </div>
 
           <div className="meta-data-container col-xs-12 col-md-8 push-md-4 col-lg-7 push-lg-5">
@@ -57,9 +57,10 @@ class Card extends Component {
             <div className="additional-details">
               <span className="genre-list">{genresList}</span>
               <span className="production-list">{productionList}</span>
+              <span className="countries-list">{productionCountriesList}</span>
 
               <div className="row nopadding release-details">
-                <div className="col-6"> Original Release: <span className="meta-data">{data.release}</span></div>
+                <div className="col-6"> Original Release: <span className="meta-data">{formatRelease}</span></div>
                 <div className="col-6"> Running Time: <span className="meta-data">{data.runtime} mins</span> </div>
                 <div className="col-6"> Box Office: <span className="meta-data">{totalRevenue}</span></div>
                 <div className="col-6"> Vote Average: <span className="meta-data">{data.vote}</span></div>
@@ -81,11 +82,18 @@ function nestedDataToString(nestedData) {
     resultString;
   if (nestedData !== undefined) {
     nestedData.forEach(function (item) {
-      nestedArray.push(item.name);
+      //nestedArray.push(item.name);
+      nestedArray.push(item);
     });
   }
   resultString = nestedArray.join(', '); // array to string
   return resultString;
 };
+
+
+function formatDate(dateString) {
+  const date = new Date(dateString)
+  return date.toDateString()
+}
 
 export default Card;
