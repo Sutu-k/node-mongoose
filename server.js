@@ -8,6 +8,7 @@ const routes = require('./routes/index');
 //Import Body parser
 const bodyParser = require('body-parser');
 const cors = require('cors');
+//const verifyToken = require('./middlewares/security');
 //Initialise the server
 const server = express();
 

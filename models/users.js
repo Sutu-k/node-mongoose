@@ -39,6 +39,23 @@ UserSchema.pre('save', function (next) {
 	console.log(`Saving ${this.firstname} ...`);
 });
 
+UserSchema.methods = {
+	register: function () {
+			return this.save();
+	}
+}
+
+UserSchema.statics = {
+	login: function (email, password) {
+			return new Promise((resolve, reject) => {
+					User.findOne({ 'email': email }).then(user => {
+							if (!user) return reject('User not found')
+							bcrypt.compare(password, `${user.password}`).then(res => res ? resolve(user) : reject('Wrong password'));
+					})
+			});
+	}
+}
+
 UserSchema.virtual('countMovies').get(function () {
 	return this.movies.length;
 })

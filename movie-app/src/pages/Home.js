@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import SearchBox from '../components/search';
+import SearchBox from '../components/SearchBox';
 import Bloodhound from 'bloodhound-js'
-import Card from '../components/card';
+import Card from '../components/Movie';
 import $ from 'jquery'
 import '../styles/main.scss';
 
@@ -55,12 +55,12 @@ class Home extends Component {
   } // end function
 
   fetchMovieID(movieID) {
-    let url = `http://localhost:3050/search/${movieID}`
+    let url = `${process.env.REACT_APP_API_URL}/search/${movieID}`
     this.fetchApi(url)
   } // end function
 
   componentDidMount() {
-    let url = `http://localhost:3050/search/${this.state.movieID}`
+    let url = `${process.env.REACT_APP_API_URL}/search/${this.state.movieID}`
     this.fetchApi(url)
 
     //========================= BLOODHOUND ==============================//
@@ -70,10 +70,9 @@ class Home extends Component {
       },
       queryTokenizer: Bloodhound.tokenizers.whitespace,
       remote: {
-        url: 'http://localhost:3050/searchs/%QUERY',
+        url: `${process.env.REACT_APP_API_URL}/searchs/%QUERY`,
         wildcard: '%QUERY',
         filter: function (movies) {
-          console.log('received=>', movies)
           // Map the remote source JSON array to a JavaScript object array
           return $.map(movies, function (movie) {
             return {
@@ -100,7 +99,6 @@ class Home extends Component {
       {
         source: suggests.ttAdapter(),
         displayKey: function (movie) {
-          console.log('oui', movie)
           return movie.title
         },
       }).on('typeahead:selected', function (obj, datum) {

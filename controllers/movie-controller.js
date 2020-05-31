@@ -1,5 +1,6 @@
 const assert = require('assert');
 const Movie = require('../models/movies');
+const User = require('../models/users');
 
 module.exports = {
   readMovies(req, res) {
@@ -58,5 +59,35 @@ module.exports = {
       }
       res.json({ message: 'Congratulation, the movie is now in database' });
     });
-  }
+  },
+  likeMovie(req, res) {
+
+    User.findOne({ email: req.user.email }).then((user) => {
+
+      Movie.findOne({ id: req.params.id }).then((movie) => {
+        if (user.movies.filter(e => e.id === movie.id).length > 0) {
+          res.status(400).json({ 'message': 'user has already liked' });
+        } else {
+          console.log(user)
+          user.movies.push(movie)
+
+
+          user.save()
+            .then(data => {
+              res.status(200).send(movie)
+            }).catch(error => {
+              console.log(error)
+              if (error.name === 'ValidationError') {
+                res.status(400).json(error.errors);
+              } else {
+                res.sendStatus(500);
+              }
+            });
+        }
+      });
+    }).catch((error) => {
+      console.log("Error===<", error);
+      res.sendStatus(500);
+    });
+  },
 }

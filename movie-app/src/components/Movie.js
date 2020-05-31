@@ -1,10 +1,25 @@
 import React, { Component } from 'react';
+import { GlobalContext } from '../context/GlobalProvider'
+
 let numeral = require('numeral');
 let backdropIMG;
 
 class Card extends Component {
+  static contextType = GlobalContext
+
+  handleLike = () => {
+    
+    if (this.context.selectors.isLogged()) {
+      this.context.actions.like(this.props.data.movieID).then(()=> {
+        alert('reussi')
+      })
+    } else {
+      this.props.history.push('/authentication');
+    }
+  }
 
   render() {
+
     let data = this.props.data
     // if movie ID found, then...
 
@@ -38,8 +53,6 @@ class Card extends Component {
       posterIMG = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSols5HZxlQWyS9JY5d3_L9imbk0LiziHiyDtMZLHt_UNzoYUXs2g';
     }
 
-
-
     return (
       <div className="container cardcont">
 
@@ -65,6 +78,17 @@ class Card extends Component {
                 <div className="col-6"> Box Office: <span className="meta-data">{totalRevenue}</span></div>
                 <div className="col-6"> Vote Average: <span className="meta-data">{data.vote}</span></div>
               </div>
+
+              <a href="#x" onClick={this.handleLike}>
+                <ion-icon size="large" name="heart-outline"></ion-icon>
+              </a>
+
+              {/* <a href="#" onClick={this.handleLike}>
+                <ion-icon size="large" name="heart"></ion-icon>
+              </a>
+
+              <ion-icon name="heart-outline"></ion-icon>
+              <ion-icon name="heart-sharp"></ion-icon> */}
             </div>
           </div>
         </div>
