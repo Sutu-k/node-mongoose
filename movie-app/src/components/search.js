@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import TMDBLogo from "../images/tmdb.svg";
+import TMDBLogo from "../images/logo.png";
 
 
 class SearchBox extends Component {
