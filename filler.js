@@ -6,6 +6,18 @@ const Movie = require('./models/movies');
 //requiring path and fs modules
 const path = require('path');
 const fs = require('fs');
+const fetch = require('node-fetch');
+
+const getMovieFromApi = async url => {
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
 // make a connection
 mongoose.connect('mongodb://localhost/user_api_database');
@@ -46,11 +58,12 @@ db.once('open', function () {
   // joining path of directory
   const moviesPath = path.join(__dirname, 'data/movies');
   // passsing moviesPath and callback function
-  fs.readdir(moviesPath, function (err, files) {
+  fs.readdir(moviesPath, async function (err, files) {
     // handling error
     if (err) {
       return console.log('Unable to scan directory: ' + err);
     }
+
     // listing all files using forEach
     for (let i in files) {
       let file = files[i];
@@ -58,6 +71,9 @@ db.once('open', function () {
       // Do whatever you want to do with the file
       let rawdata = fs.readFileSync(`${moviesPath}/${file}`);
       let jsonMovie = JSON.parse(rawdata);
+
+      let url = `https://api.themoviedb.org/3/movie/${jsonMovie.id}?&api_key=cfe422613b250f702980a3bbf9e90716`
+      data = await getMovieFromApi(url);
 
       let movie = new Movie();
       movie.id = jsonMovie.id
@@ -81,8 +97,8 @@ db.once('open', function () {
       movie.runtime = jsonMovie.runtime
       movie.revenue = jsonMovie.revenue
       movie.vote_average = jsonMovie.vote_average
-      movie.poster_path = jsonMovie.poster_path
-      movie.backdrop_path = jsonMovie.backdrop_path
+      movie.poster_path = data.poster_path
+      movie.backdrop_path = data.backdrop_path
       movie.save()
       movies.push(movie)
     }
