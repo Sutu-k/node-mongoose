@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 let numeral = require('numeral');
 let backdropIMG;
 
-class Card extends Component {
+class Movie extends Component {
   static contextType = GlobalContext
 
   constructor(props) {
@@ -117,13 +117,6 @@ class Card extends Component {
                 <ion-icon size="large" name="heart" onClick={this.handleDislike}></ion-icon> :
                 <ion-icon size="large" name="heart-outline" onClick={this.handleLike}></ion-icon>
               }
-
-              {/* <a href="#" onClick={this.handleLike}>
-                <ion-icon size="large" name="heart"></ion-icon>
-              </a>
-
-              <ion-icon name="heart-outline"></ion-icon>
-              <ion-icon name="heart-sharp"></ion-icon> */}
             </div>
           </div>
         </div>
@@ -141,7 +134,6 @@ function nestedDataToString(nestedData) {
     resultString;
   if (nestedData !== undefined) {
     nestedData.forEach(function (item) {
-      //nestedArray.push(item.name);
       nestedArray.push(item);
     });
   }
@@ -155,4 +147,4 @@ function formatDate(dateString) {
   return date.toDateString()
 }
 
-export default withRouter(Card) // at the end of component
+export default withRouter(Movie) // at the end of component

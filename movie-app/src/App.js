@@ -4,6 +4,7 @@ import Footer from './components/Footer'
 import { GlobalProvider } from './context/GlobalProvider'
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import EntryPage from './pages/Auth/EntryPage';
+import MovieList from './pages/MovieList';
 
 class App extends Component {
   render() {
@@ -12,6 +13,7 @@ class App extends Component {
         <Router>
           <Switch>
             <Route path="/authentication" component={EntryPage} />
+            <Route path="/my-favorite-movies" component={MovieList} />
             <Route exact path="/" render={
               () => <div>
                 <div id="outer-container">

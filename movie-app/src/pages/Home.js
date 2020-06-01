@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import SearchBox from '../components/SearchBox';
 import Bloodhound from 'bloodhound-js'
-import Card from '../components/Movie';
+import Movie from '../components/Movie';
 import $ from 'jquery'
 import '../styles/main.scss';
 
@@ -20,7 +20,7 @@ class Home extends Component {
         <SearchBox
           fetchMovieID={this.fetchMovieID.bind(this)}
         />
-        <Card data={this.state} />
+        <Movie data={this.state} />
       </div>
     )
   } // END render
@@ -46,7 +46,6 @@ class Home extends Component {
         runtime: data.runtime,
         revenue: data.revenue,
         backdrop: data.backdrop_path
-
       })
     })
 
