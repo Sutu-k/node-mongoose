@@ -60,18 +60,16 @@ module.exports = {
       res.json({ message: 'Congratulation, the movie is now in database' });
     });
   },
+
   likeMovie(req, res) {
 
-    User.findOne({ email: req.user.email }).then((user) => {
+    User.findOne({ email: req.user.email }).populate('movies').then((user) => {
 
       Movie.findOne({ id: req.params.id }).then((movie) => {
         if (user.movies.filter(e => e.id === movie.id).length > 0) {
           res.status(400).json({ 'message': 'user has already liked' });
         } else {
-          console.log(user)
           user.movies.push(movie)
-
-
           user.save()
             .then(data => {
               res.status(200).send(movie)
@@ -86,8 +84,39 @@ module.exports = {
         }
       });
     }).catch((error) => {
-      console.log("Error===<", error);
+      console.log("Error", error);
       res.sendStatus(500);
     });
   },
+
+  dislikeMovie(req, res) {
+
+    User.findOne({ email: req.user.email }).populate('movies').then((user) => {
+
+      Movie.findOne({ id: req.params.id }).then((movie) => {
+        console.log(movie.id)
+        console.log(user.movies[1].id)
+        console.log(user.movies.filter(e => e.id === movie.id).length)
+        if (user.movies.filter(e => e.id === movie.id).length > 0) {
+          user.movies.pull(movie)
+          user.save()
+            .then(data => {
+              res.status(200).send(movie)
+            }).catch(error => {
+              console.log(error)
+              if (error.name === 'ValidationError') {
+                res.status(400).json(error.errors);
+              } else {
+                res.sendStatus(500);
+              }
+            });
+        } else {
+          res.status(400).json({ 'message': 'user has not liked yet' });
+        }
+      });
+    }).catch((error) => {
+      console.log("Error", error);
+      res.sendStatus(500);
+    });
+  }
 }

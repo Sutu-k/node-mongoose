@@ -89,9 +89,10 @@ module.exports = {
 					email: user.email
 				});
 
-				res.status(201).send({ token });
+				res.status(201).send({ token, user });
 			})
 			.catch(error => {
+				console.log(error)
 				res.status(400).send("Invalid token");
 			});
 

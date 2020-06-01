@@ -27,9 +27,15 @@ const UserSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'movie'
 	}]
+}, {
+	usePushEach: true
 });
 
 UserSchema.pre('save', function (next) {
+
+	const user = this;
+	if (!user.isModified('password')) return next();
+
 	bcrypt.genSalt(10).then(salt => {
 		bcrypt.hash(this.password, salt).then(hash => {
 			this.password = hash;
@@ -41,18 +47,18 @@ UserSchema.pre('save', function (next) {
 
 UserSchema.methods = {
 	register: function () {
-			return this.save();
+		return this.save();
 	}
 }
 
 UserSchema.statics = {
 	login: function (email, password) {
-			return new Promise((resolve, reject) => {
-					User.findOne({ 'email': email }).then(user => {
-							if (!user) return reject('User not found')
-							bcrypt.compare(password, `${user.password}`).then(res => res ? resolve(user) : reject('Wrong password'));
-					})
-			});
+		return new Promise((resolve, reject) => {
+			User.findOne({ 'email': email }).populate('movies').then(user => {
+				if (!user) return reject('User not found')
+				bcrypt.compare(password, `${user.password}`).then(res => res ? resolve(user) : reject('Wrong password'));
+			})
+		});
 	}
 }
 

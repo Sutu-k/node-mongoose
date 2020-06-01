@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { GlobalContext } from '../context/GlobalProvider'
+import { withRouter } from 'react-router-dom';
 
 let numeral = require('numeral');
 let backdropIMG;
@@ -7,15 +8,47 @@ let backdropIMG;
 class Card extends Component {
   static contextType = GlobalContext
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      user: JSON.parse(localStorage.getItem('user'))
+    }
+  }
+
   handleLike = () => {
-    
     if (this.context.selectors.isLogged()) {
-      this.context.actions.like(this.props.data.movieID).then(()=> {
-        alert('reussi')
-      })
+      this.context.actions.like(this.props.data.movieID).then((movie) => {
+        this.state.user.movies.push(movie)
+        this.setState({
+          user: this.state.user
+        })
+
+        localStorage.setItem('user', JSON.stringify(this.state.user))
+      }).catch(error => alert(error))
+
     } else {
       this.props.history.push('/authentication');
     }
+  }
+
+  handleDislike = () => {
+    if (this.context.selectors.isLogged()) {
+      this.context.actions.dislike(this.props.data.movieID).then((movie) => {
+        this.state.user.movies = this.state.user.movies.filter(item => item.id !== movie.id)
+        this.setState({
+          user: this.state.user
+        })
+        localStorage.setItem('user', JSON.stringify(this.state.user))
+      }).catch(error => alert(error))
+
+    } else {
+      this.props.history.push('/authentication');
+    }
+  }
+
+  isMovieLikedByCurrentUser = () => {
+    if (!this.state.user) return 0
+    return this.state.user.movies.filter(movie => movie.id === this.props.data.movieID).length > 0
   }
 
   render() {
@@ -34,13 +67,13 @@ class Card extends Component {
       genresList = nestedDataToString(genres);
     backdropIMG = 'https://image.tmdb.org/t/p/original' + data.backdrop;
     let formatRelease = formatDate(data.release);
-
+    let voteDate = '';
 
     // conditional statements for no data
     if (data.vote === 'undefined' || data.vote === 0) {
-      data.vote = noData
+      voteDate = noData
     } else {
-      data.vote = data.vote + ' / 10'
+      voteDate = data.vote + ' / 10'
     };
 
     if (totalRevenue === 'undefined' || totalRevenue === 0) {
@@ -76,12 +109,14 @@ class Card extends Component {
                 <div className="col-6"> Original Release: <span className="meta-data">{formatRelease}</span></div>
                 <div className="col-6"> Running Time: <span className="meta-data">{data.runtime} mins</span> </div>
                 <div className="col-6"> Box Office: <span className="meta-data">{totalRevenue}</span></div>
-                <div className="col-6"> Vote Average: <span className="meta-data">{data.vote}</span></div>
+                <div className="col-6"> Vote Average: <span className="meta-data">{voteDate}</span></div>
               </div>
 
-              <a href="#x" onClick={this.handleLike}>
-                <ion-icon size="large" name="heart-outline"></ion-icon>
-              </a>
+
+              {this.isMovieLikedByCurrentUser() ?
+                <ion-icon size="large" name="heart" onClick={this.handleDislike}></ion-icon> :
+                <ion-icon size="large" name="heart-outline" onClick={this.handleLike}></ion-icon>
+              }
 
               {/* <a href="#" onClick={this.handleLike}>
                 <ion-icon size="large" name="heart"></ion-icon>
@@ -120,4 +155,4 @@ function formatDate(dateString) {
   return date.toDateString()
 }
 
-export default Card;
+export default withRouter(Card) // at the end of component

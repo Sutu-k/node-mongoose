@@ -22,4 +22,5 @@ module.exports = (server) => {
 
 	server.use(verifyToken)
 	server.post('/movies/:id/like', MovieController.likeMovie);
+	server.post('/movies/:id/dislike', MovieController.dislikeMovie);
 }
